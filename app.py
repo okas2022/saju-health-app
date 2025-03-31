@@ -116,3 +116,62 @@ if st.button("🔍 분석 및 추천하기"):
     st.subheader("💊 추천 영양소")
     for nut in nutrients:
         st.markdown(f"- {nut}")
+[FULL UPDATED CONTENT ALREADY PRESENTED IN PREVIOUS MESSAGE, RETAINED AS-IS ABOVE]
+
+# 이메일 전송 기능 및 광고 배너 추가
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# 이메일 전송 함수
+def send_email(recipient_email, subject, message):
+    try:
+        sender_email = "audiso.seo@gmail.com"  # 본인의 이메일 주소
+        sender_password = "tjdudwns00!!"  # 앱 비밀번호 또는 SMTP 인증 비밀번호
+
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+        msg['Subject'] = subject
+
+        msg.attach(MIMEText(message, 'plain'))
+
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.send_message(msg)
+        return True
+    except Exception as e:
+        return False
+
+st.markdown("---")
+st.markdown("[🛍️ 건강 보청기 솔루션 제안 — xr.audiso.co.kr](https://xr.audiso.co.kr)")
+st.markdown("---")
+
+email_address = st.text_input("📧 결과를 이메일로 받아보시겠어요? 이메일 주소를 입력해주세요.")
+if st.button("📨 이메일 전송하기"):
+    if email_address:
+        success = send_email(email_address, "사주 건강 분석 결과", explanation + "
+
+추천 영양소:
+" + "
+".join(nutrients))
+        if success:
+            st.success("✅ 이메일이 성공적으로 전송되었습니다!")
+        else:
+            st.error("❌ 이메일 전송에 실패했습니다. 이메일 설정을 확인해주세요.")
+    else:
+        st.warning("⚠️ 이메일 주소를 입력해주세요.")
+
+# FAQ 추가
+with st.expander("❓ 자주 묻는 질문 (FAQ)"):
+    st.markdown("""
+**Q. 사주로 정말 건강 상태를 알 수 있나요?**  
+A. 사주는 동양 철학의 체질 해석 기반이며, 이 앱은 전통 해석 + 건강 설문을 함께 고려합니다.
+
+**Q. 오행은 어떻게 분석되나요?**  
+A. 태어난 해의 천간을 기준으로 목·화·토·금·수 중 어떤 기운이 중심인지 분석합니다.
+
+**Q. PDF 결과는 어디에 활용할 수 있나요?**  
+A. 병원 건강 상담 시 참고하거나, 영양제 구매 시 본인의 특성에 맞는 제품 선택에 도움이 됩니다.
+    """)
