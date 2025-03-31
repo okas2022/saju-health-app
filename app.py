@@ -201,8 +201,6 @@ if st.button("🔍 분석 및 추천하기"):
     for n in nutrients:
         st.markdown(f"- {n}")
 
-    pdf_path = save_pdf(explanation + "\n\n추천 영양소:\n" + "\n".join(nutrients))
-    with open(pdf_path, "rb") as f:
         st.download_button("📄 분석 결과 PDF 다운로드", f, file_name="health_report.pdf")
 
     st.markdown("---")
