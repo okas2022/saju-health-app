@@ -1,20 +1,19 @@
-# app.py
+# app.py (OpenAI legacy version compatible)
 import streamlit as st
 import json
 from datetime import datetime
 from korean_lunar_calendar import KoreanLunarCalendar
-import os
-from openai import OpenAI
+import openai
 
-# OpenAI 클라이언트 초기화
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# OpenAI API 키 직접 입력 (주의: 테스트용)
+openai.api_key = "YOUR_API_KEY_HERE"
 
 # 오행-영양소 매핑 데이터 로드
 def load_oheng_data():
     with open("oheng_data.json", "r", encoding="utf-8") as f:
         return json.load(f)
 
-# 사주 오행 분석 (년간 기준)
+# 사주 오행 분석
 def analyze_oheng_by_year(year):
     stems = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계']
     stem = stems[(year - 4) % 10]
@@ -29,7 +28,7 @@ def analyze_oheng_by_year(year):
     else:
         return "수"
 
-# 영양소 추천 함수
+# 영양소 추천
 def recommend_nutrients(oheng_element, balance, bmi):
     oheng_data = load_oheng_data()
     element_data = oheng_data.get(oheng_element, {}).get(balance)
@@ -42,7 +41,7 @@ def recommend_nutrients(oheng_element, balance, bmi):
         base.append("체중 증가 지원: 단백질, 아연")
     return list(set(base))
 
-# GPT 해석 생성 함수 (OpenAI SDK >=1.0)
+# GPT 해석 생성 함수 (legacy)
 def generate_gpt_interpretation(name, gender, oheng, survey, nutrients, bmi):
     survey_summary = ", ".join([k for k, v in survey.items() if v])
     prompt = f"""
@@ -57,22 +56,22 @@ AI가 추천한 영양소는 {', '.join(nutrients)}입니다.
 3. 종합적으로 5줄 이상의 건강 분석 및 영양제 추천 이유를 자연스럽게 작성해주세요.
 """
     try:
-        response = client.chat.completions.create(
-            model="gpt-4",
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "당신은 사주와 건강을 융합하여 맞춤형 건강 예측과 영양제를 설명하는 AI 상담사입니다."},
                 {"role": "user", "content": prompt}
             ]
         )
-        return response.choices[0].message.content.strip()
+        return response['choices'][0]['message']['content'].strip()
     except Exception as e:
         return f"GPT 응답 중 오류 발생: {str(e)}"
 
-# Streamlit 앱 시작
+# Streamlit 앱
 st.set_page_config(page_title="사주 건강 영양제 추천", layout="centered")
 st.title("🌿 사주 기반 건강 예측 및 영양제 추천 앱")
 
-# 사용자 기본 정보
+# 사용자 입력
 st.subheader("👤 기본 정보 입력")
 name = st.text_input("이름을 입력하세요")
 gender = st.radio("성별을 선택하세요", options=["남성", "여성"])
@@ -83,7 +82,7 @@ weight = st.number_input("체중(kg)", min_value=30, max_value=200, value=70)
 bmi = weight / ((height / 100) ** 2)
 
 # 건강 설문
-st.subheader("📝 건강 설문 (해당되는 항목을 체크해주세요)")
+st.subheader("📝 건강 설문")
 survey = {
     "피로": st.checkbox("자주 피로함"),
     "수면": st.checkbox("수면 부족 또는 불면증"),
@@ -97,7 +96,7 @@ survey = {
     "수분부족": st.checkbox("물을 거의 마시지 않음")
 }
 
-# 분석 및 출력
+# 실행
 if st.button("분석 및 추천하기"):
     saju_oheng = analyze_oheng_by_year(birth_date.year)
     balance_type = "부족"
