@@ -90,3 +90,46 @@ def generate_interpretation(name, gender, oheng, survey, bmi):
     result += "2026년은 면역력 약화와 소화기 계통의 변화에 유의해야 할 시기입니다.\n"
     result += "영양소 섭취는 해당 오행과 건강 상태를 고려해 선택하는 것이 바람직합니다."
     return result
+
+# Streamlit 앱 UI 구성
+st.set_page_config(page_title="사주 기반 건강 분석 및 영양제 추천", layout="centered")
+st.title("🌿 사주 기반 건강 예측 및 영양제 추천")
+
+st.subheader("👤 기본 정보 입력")
+name = st.text_input("이름")
+gender = st.radio("성별", ["남성", "여성"])
+birth_date = st.date_input("생년월일", value=datetime(1990, 1, 1), min_value=datetime(1940, 1, 1), max_value=datetime(2025, 12, 31))
+time_hour = st.number_input("태어난 시간 (0~23시)", min_value=0, max_value=23, value=12)
+height = st.number_input("키 (cm)", min_value=100, max_value=250, value=170)
+weight = st.number_input("몸무게 (kg)", min_value=30, max_value=200, value=65)
+bmi = weight / ((height / 100) ** 2)
+
+st.subheader("🩺 건강 관련 설문")
+survey = {
+    "피로": st.checkbox("자주 피로함"),
+    "수면": st.checkbox("수면 부족 또는 불면증"),
+    "소화": st.checkbox("소화불량 또는 장트러블"),
+    "고혈압": st.checkbox("고혈압 병력 있음"),
+    "당뇨": st.checkbox("당뇨 병력 있음"),
+    "신장": st.checkbox("신장 질환 있음"),
+    "심장": st.checkbox("심장 질환 있음"),
+    "뇌": st.checkbox("뇌 질환 있음"),
+    "운동부족": st.checkbox("운동을 거의 하지 않음"),
+    "수분부족": st.checkbox("물을 거의 마시지 않음")
+}
+
+if st.button("🔍 분석 및 추천하기"):
+    saju_oheng = analyze_oheng_by_year(birth_date.year)
+    balance_type = "부족"
+    nutrients = recommend_nutrients(saju_oheng, balance_type, bmi)
+    result = generate_interpretation(name, gender, saju_oheng, survey, bmi)
+
+    st.subheader("📖 사주 기반 건강 해석")
+    st.text(result)
+
+    if nutrients:
+        st.subheader("💊 추천 영양소")
+        for item in nutrients:
+            st.markdown(f"- {item}")
+    else:
+        st.info("추천할 영양소가 충분하지 않습니다.")
