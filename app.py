@@ -6,7 +6,7 @@ from korean_lunar_calendar import KoreanLunarCalendar
 import openai
 
 # OpenAI API 키 직접 입력 (주의: 테스트용)
-openai.api_key = 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
+openai.api_key="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"
 
 # 오행-영양소 매핑 데이터 로드
 def load_oheng_data():
