@@ -73,10 +73,11 @@ def generate_interpretation(name, gender, oheng, survey, bmi, season):
     result += "2025년은 스트레스 관리, 2026년은 면역력과 소화기 건강에 주의가 필요합니다."
     return result
 
-def save_pdf(text):
+
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    pdf.add_font('Nanum', '', 'NanumGothic.ttf', uni=True)
+    pdf.set_font("Nanum", size=12)
     for line in text.split("\n"):
         pdf.multi_cell(0, 10, line)
     path = os.path.join(tempfile.gettempdir(), "report.pdf")
