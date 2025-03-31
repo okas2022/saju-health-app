@@ -76,7 +76,7 @@ st.title("🌿 사주 기반 건강 예측 및 영양제 추천 앱")
 st.subheader("👤 기본 정보 입력")
 name = st.text_input("이름을 입력하세요")
 gender = st.radio("성별을 선택하세요", options=["남성", "여성"])
-birth_date = st.date_input("생년월일 선택", value=datetime(1993, 3, 29))
+birth_date = st.date_input("생년월일 선택", value=datetime(1993, 3, 29), min_value=datetime(1940, 1, 1), max_value=datetime(2025, 12, 31)))
 time_hour = st.number_input("태어난 시간 (0~23시)", min_value=0, max_value=23, value=12)
 height = st.number_input("키(cm)", min_value=100, max_value=250, value=170)
 weight = st.number_input("체중(kg)", min_value=30, max_value=200, value=70)
@@ -109,3 +109,7 @@ if st.button("분석 및 추천하기"):
 
     if nutrients:
         st.subheader("💊 추천 영양 성분")
+        for n in nutrients:
+            st.markdown(f"- {n}")
+    else:
+        st.warning("추천할 영양소가 충분하지 않습니다.")
