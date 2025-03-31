@@ -201,7 +201,6 @@ if st.button("🔍 분석 및 추천하기"):
     for n in nutrients:
         st.markdown(f"- {n}")
 
-        st.download_button("📄 분석 결과 PDF 다운로드", f, file_name="health_report.pdf")
 
     st.markdown("---")
     st.markdown("[🛍️ 건강 보청기 솔루션 제안 — xr.audiso.co.kr](https://xr.audiso.co.kr)")
