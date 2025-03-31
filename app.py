@@ -76,4 +76,36 @@ st.title("🌿 사주 기반 건강 예측 및 영양제 추천 앱")
 st.subheader("👤 기본 정보 입력")
 name = st.text_input("이름을 입력하세요")
 gender = st.radio("성별을 선택하세요", options=["남성", "여성"])
-birth_date = st.date_input("생년월일 선택", value=datetime(1993, 3,
+birth_date = st.date_input("생년월일 선택", value=datetime(1993, 3, 29))
+time_hour = st.number_input("태어난 시간 (0~23시)", min_value=0, max_value=23, value=12)
+height = st.number_input("키(cm)", min_value=100, max_value=250, value=170)
+weight = st.number_input("체중(kg)", min_value=30, max_value=200, value=70)
+bmi = weight / ((height / 100) ** 2)
+
+# 건강 설문
+st.subheader("📝 건강 설문 (해당되는 항목을 체크해주세요)")
+survey = {
+    "피로": st.checkbox("자주 피로함"),
+    "수면": st.checkbox("수면 부족 또는 불면증"),
+    "소화": st.checkbox("소화불량 또는 장트러블"),
+    "고혈압": st.checkbox("고혈압 병력 있음"),
+    "당뇨": st.checkbox("당뇨 병력 있음"),
+    "신장": st.checkbox("신장 질환 있음"),
+    "심장": st.checkbox("심장 질환 있음"),
+    "뇌": st.checkbox("뇌 질환 있음"),
+    "운동부족": st.checkbox("운동을 거의 하지 않음"),
+    "수분부족": st.checkbox("물을 거의 마시지 않음")
+}
+
+# 분석 및 출력
+if st.button("분석 및 추천하기"):
+    saju_oheng = analyze_oheng_by_year(birth_date.year)
+    balance_type = "부족"
+    nutrients = recommend_nutrients(saju_oheng, balance_type, bmi)
+
+    st.subheader("🔍 GPT 건강 예측 및 해석")
+    explanation = generate_gpt_interpretation(name, gender, saju_oheng, survey, nutrients, bmi)
+    st.markdown(explanation)
+
+    if nutrients:
+        st.subheader("💊 추천 영양 성분")
