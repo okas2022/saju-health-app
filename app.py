@@ -3,11 +3,11 @@ import streamlit as st
 import json
 from datetime import datetime
 from korean_lunar_calendar import KoreanLunarCalendar
-import openai
 import os
+from openai import OpenAI
 
-# GPT API Key 설정 (환경 변수 또는 직접 입력)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# OpenAI 클라이언트 초기화
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # 오행-영양소 매핑 데이터 로드
 def load_oheng_data():
@@ -42,7 +42,7 @@ def recommend_nutrients(oheng_element, balance, bmi):
         base.append("체중 증가 지원: 단백질, 아연")
     return list(set(base))
 
-# GPT 해석 생성 함수
+# GPT 해석 생성 함수 (OpenAI SDK >=1.0)
 def generate_gpt_interpretation(name, gender, oheng, survey, nutrients, bmi):
     survey_summary = ", ".join([k for k, v in survey.items() if v])
     prompt = f"""
@@ -57,7 +57,7 @@ AI가 추천한 영양소는 {', '.join(nutrients)}입니다.
 3. 종합적으로 5줄 이상의 건강 분석 및 영양제 추천 이유를 자연스럽게 작성해주세요.
 """
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "당신은 사주와 건강을 융합하여 맞춤형 건강 예측과 영양제를 설명하는 AI 상담사입니다."},
