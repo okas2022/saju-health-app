@@ -201,7 +201,6 @@ if st.button("🔍 분석 및 추천하기"):
     for n in nutrients:
         st.markdown(f"- {n}")
 
-        st.download_button("📄 분석 결과 PDF 다운로드", f, file_name="health_report.pdf")
 
     st.markdown("---")
     st.markdown("[🛍️ 건강 보청기 솔루션 제안 — xr.audiso.co.kr](https://xr.audiso.co.kr)")
@@ -228,3 +227,4 @@ A. 태어난 해의 천간을 기준으로 목·화·토·금·수 중 어떤 �
 **Q. PDF 결과는 어디에 활용할 수 있나요?**  
 A. 병원 건강 상담 시 참고하거나, 영양제 구매 시 본인의 특성에 맞는 제품 선택에 도움이 됩니다.
 """)
+
