@@ -175,6 +175,24 @@ def send_email(recipient_email, subject, message):
         return True
     except Exception:
         return False
+# 질병 및 약물 기반 영양소 추천
+def get_disease_recommendations(diseases, medications):
+    disease_nutrients = {
+        "고혈압": ["칼륨", "마그네슘", "오메가3"],
+        "당뇨": ["크롬", "마그네슘", "식이섬유"],
+        "신장질환": ["비타민 D", "철분(주의 필요)", "엽산"],
+        "심장질환": ["오메가3", "코엔자임 Q10", "비타민 E"],
+        "난청": ["아연", "비타민 B12", "비타민 D"],
+        "아토피피부염": ["비타민 D", "오메가3", "프로바이오틱스"],
+        "천식": ["비타민 C", "마그네슘", "오메가3"],
+        "정신질환": ["오메가3", "비타민 B군", "마그네슘"]
+    }
+
+    nutrient_set = set()
+    for d in diseases:
+        nutrient_set.update(disease_nutrients.get(d, []))
+
+    return sorted(nutrient_set)
 
 # Streamlit UI
 st.set_page_config(page_title="사주 건강 예측", layout="centered")
@@ -211,12 +229,29 @@ survey = {
     "체중변화": st.checkbox("체중 변화가 큼"),
     "무기력": st.checkbox("무기력함을 자주 느낌")
 }
+st.subheader("🧬 질병 및 복용약 입력")
+selected_diseases = st.multiselect(
+    "진단받은 질병을 선택하세요",
+    ["고혈압", "당뇨", "신장질환", "심장질환", "난청", "아토피피부염", "천식", "정신질환"]
+)
+
+medications = st.text_area("복용 중인 약물을 입력해주세요 (선택)", placeholder="예: 노바스크, 글루코파지 등")
 
 if st.button("🔍 분석 및 추천하기"):
     oheng = analyze_oheng_by_year(birth_date.year)
     season = get_birth_season(birth_date)
     explanation = generate_interpretation(name, gender, oheng, survey, bmi, season)
     st.subheader("📘 사주 건강 분석 결과")
+    if selected_diseases:
+    st.subheader("💊 질병 기반 추천 영양소")
+    disease_recos = get_disease_recommendations(selected_diseases, medications)
+    if disease_recos:
+        st.markdown("해당 질환을 고려한 맞춤 영양소 추천 목록:")
+        for nutrient in disease_recos:
+            st.markdown(f"- {nutrient}")
+    else:
+        st.markdown("해당 질환에 대한 영양소 추천 데이터가 없습니다.")
+
     st.text(explanation)
 
     st.markdown("---")
@@ -232,5 +267,3 @@ if st.button("🔍 분석 및 추천하기"):
                 st.error("❌ 이메일 전송에 실패했습니다. 설정을 확인해주세요.")
         else:
             st.warning("⚠️ 이메일 주소를 입력해주세요.")
-
-
